@@ -1,20 +1,18 @@
-# Errors
+# Status Codes
 
-<aside class="notice">This error section is stored in a separate file in `includes/_errors.md`. Slate allows you to optionally separate out your docs into many files...just save them to the `includes` folder and add them to the top of your `index.md`'s frontmatter. Files are included in the order listed.</aside>
-
-The Kittn API uses the following error codes:
+The R/a/dio API uses the following error codes:
 
 
 Error Code | Meaning
 ---------- | -------
 400 | Bad Request -- Your request sucks
-401 | Unauthorized -- Your API key is wrong
-403 | Forbidden -- The kitten requested is hidden for administrators only
-404 | Not Found -- The specified kitten could not be found
-405 | Method Not Allowed -- You tried to access a kitten with an invalid method
+401 | Unauthorized -- Your API key is wrong when trying to make authenticated requests
+403 | Forbidden -- You aren't authenticated and are trying to access a protected resource
+404 | Not Found -- The specified resource could not be found
+405 | Method Not Allowed -- You tried to use a method we don't respond to 
 406 | Not Acceptable -- You requested a format that isn't json
-410 | Gone -- The kitten requested has been removed from our servers
-418 | I'm a teapot
-429 | Too Many Requests -- You're requesting too many kittens! Slow down!
-500 | Internal Server Error -- We had a problem with our server. Try again later.
-503 | Service Unavailable -- We're temporarially offline for maintanance. Please try again later.
+410 | Gone -- A resource was removed (rarely used)
+418 | I'm a teapot -- You will know why you get this response
+429 | Too Many Requests -- Stop spamming already (Time until unbanned: `X-Radio-Timeout` header)
+500 | Internal Server Error -- We had a problem with our server. It'll maybe be fixed
+503 | Service Unavailable -- We're temporarially offline for maintenance

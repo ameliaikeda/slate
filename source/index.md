@@ -1,14 +1,11 @@
 ---
-title: API Reference
+title: R/a/dio API v2 Docs
 
 language_tabs:
   - shell
-  - ruby
-  - python
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
+  - <a href='https://docs.r-a-d.io/v1'>Version 1 Documentation</a>
 
 includes:
   - errors
@@ -18,67 +15,134 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+R/a/dio's API is a plain REST API. We don't give out authentication keys unless you have an obvious need for it. Aside from that, requests are essentially limitless, and there is a global 1 second cache on all requests to avoid hitting a database more than needed when our highest resolution timestamps are in seconds.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](http://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
-
-# Authentication
-
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
-
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+<aside class="warning">
+Unless explicitly stated, all endpoints are <code>GET</code> only unless authenticated.
 </aside>
 
-# Kittens
+<aside class="notice">
+  Should you need PUT/DELETE/PATCH capabilities and can;t make native requests, add the method to the <code>_method</code> query parameter.
+</aside>
 
-## Get All Kittens
+The base URL for the v2 API is `https://api.r-a-d.io/v2`, and GET examples are accessible in a browser.
 
-```ruby
-require 'kittn'
+# Overview
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+## Current Info
 
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
+curl "https://api.r-a-d.io/v2/current"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "now_playing": "tripflag - #comiket",
+  "listeners": 125,
+  "bot_stream": true,
+  "start": 1432643119,
+  "end": 1432643358,
+  "current": 1432643325,
+  "thread_url": "https://example.com/thread/1",
+  "requests": true,
+  "song": {
+    "id": 1337,
+    "artist": "tripflag",
+    "title": "#comiket",
+    "album": "Tesudo Musume - Collection",
+    "tags": "gatta goto chuu chuu tetsu musuu"
+  },
+  "dj": {
+    "id": "17",
+    "name": "Hanyuu-sama",
+    "image_url": "https://static.r-a-d.io/images/dj/17"
+  }
+}
+```
+
+This endpoint retrieves all kittens.
+
+### HTTP Request
+
+`GET https://api.r-a-d.io/v2/current`
+
+### Response
+
+Will always return `200 OK` unless we've really screwed up, in which case you'll see a `500 Internal Server Error`.
+
+Key | Type | Description
+--- | ---- | -----------
+now_playing | string  | The currently playing song's metadata. This can be an empty string.
+listeners   | integer | The number of listeners currently tuned into R/a/dio.
+bot_stream  | boolean | If true, then our [AFK Streamer](https://github.com/R-a-dio/Hanyuu-sama) is playing. This does not mean you can request.
+start       | long    | Unix timestamp for the time the current song started
+end         | long    | Unix timestamp for the time the current song ended. `null` if unknown.
+current     | long    | The current server time as a unix timestamp, used for syncing progress bars.
+thread      | string  | A url to the current thread. Can be `string` or `null`
+requests    | boolean | If `true`, requests are allowed to the `/request` endpoint.
+song        | object  | A [Songs](#songs) object or `null`, describing the current playing song. If `null`, we don't have the song in our database, or a DJ is playing with different metadata. 
+dj          | object  | A [DJs](#djs) object, or `null` if there is no currently connected DJ (stream is offline)
+online      | boolean | `true` if the stream is currently online (A DJ is connected). Note this value can be unreliable as the stream has a fallback.
+
+# Songs
+
+## Get a specific song by ID
+
+
+```shell
+curl "https://api.r-a-d.io/v2/songs/1337"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "artist": "tripflag",
+  "title": "#comiket",
+  "album": "Tesudo Musume - Collection",
+  "tags": ["gatta", "goto", "chuu", "chuu", "tetsu", "musuu"],
+  "requestable": true,
+  "cooldown": 12341,
+  "request_hash": "abcdef1234567890",
+  "last_played": 1432643119,
+  "last_requested": 1432643117,
+  "plays": 9001
+}
+```
+
+This endpoint retrieves a specific song by ID. See below for searching, which uses elasticsearch.
+
+
+### HTTP Request
+
+`GET https://api.r-a-d.io/v2/songs/:id`
+
+### Response
+
+Key | Type | Description
+--- | ---- | -----------
+artist         | string  | The song's artist metadata
+title          | string  | The song's title metadata
+album          | string  | The song's album metadata
+tags           | array   | Tags for the song provided by R/a/dio admins, each tag is a string
+requestable    | boolean | `true` if this song is requestable (no problems with the file, off cooldown)
+cooldown       | long    | The number of seconds until a song becomes requestable (if negative, assume never). Requestable songs will show `0` as the cooldown
+request_hash   | string  | A unique identifier used to request the song using the `/song/:id/request` endpoint
+last_played    | long    | The unix timestamp of when this song was last played
+last_requested | long    | The unix timestamp of when this song was last requested
+plays          | integer | The number of times this song has been last_played
+
+<aside class="info">
+  Be careful - cooldowns and other times use the value of the <code>current</code> key on the <code>GET /current</code> endpoint as their canonical time.
+</aside>
+
+## Search for a song
+
+
+```shell
+curl "https://api.r-a-d.io/v2/songs/search?q=comiket"
 ```
 
 > The above command returns JSON structured like this:
@@ -86,83 +150,92 @@ curl "http://example.com/api/kittens"
 ```json
 [
   {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
+    "artist": "tripflag",
+    "title": "#comiket",
+    "album": "Tesudo Musume - Collection",
+    "tags": ["gatta", "goto", "chuu", "chuu", "tetsu", "musuu"],
+    "requestable": true,
+    "cooldown": 12341,
+    "request_hash": "abcdef1234567890",
+    "last_played": 1432643119,
+    "last_requested": 1432643117,
+    "plays": 9001
   },
   {
-    "id": 2,
-    "name": "Isis",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
+    "artist": "tripflag",
+    "title": "#comiket - another one",
+    "album": "Tesudo Musume - Collection",
+    "tags": ["gatta", "goto", "chuu", "chuu", "tetsu", "musuu"],
+    "requestable": true,
+    "cooldown": 12341,
+    "request_hash": "abcdef1234567890",
+    "last_played": 1432643119,
+    "last_requested": 1432643117,
+    "plays": 9001
   }
 ]
 ```
 
-This endpoint retrieves all kittens.
+This endpoint retrieves a specific song by ID. See below for searching, which uses elasticsearch.
+
 
 ### HTTP Request
 
-`GET http://example.com/kittens`
+`GET https://api.r-a-d.io/v2/songs/search`
 
-### Query Parameters
+### Response
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+See above. Returns an empty array (`[]`) when no results are found.
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
+### URL Parameters
 
-## Get a Specific Kitten
+Parameter | Type | Description
+--------- | ---- | -----------
+q         | string | The primary search key (string); use this for search boxes
+artist    | string | Fuzzy-matched against the `artist` key of a `Song`
+title     | string | Fuzzy-matched against the `title` key of a `Song`
+album     | string | Fuzzy-matched against the `album` key of a `Song`
+tags      | string | Space-delimited string of tags to exact-match against
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+## Request a song
 
 ```shell
-curl "http://example.com/api/kittens/3"
-  -H "Authorization: meowmeowmeow"
+curl -XPATCH "https://api.r-a-d.io/v2/songs/1337/request" \
+      -d "hash=abcdef1234567890123412512351235"
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
 {
-  "id": 2,
-  "name": "Isis",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+  "requested": false,
+  "reason": {
+    "human": "You need to wait longer before you can request",
+    "robot": "cooldown"
+  }
 }
 ```
 
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">If you're not using an administrator API key, note that some kittens will return 403 Forbidden if they are hidden for admins only.</aside>
-
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`PATCH https://api.r-a-d.io/v2/songs/1337/request`
 
-### URL Parameters
+### Response
 
-Parameter | Description
---------- | -----------
-ID | The ID of the cat to retrieve
+Key | Type | Description
+--- | ---- | -----------
+requested    | boolean  | `true` if the song was successfully requested, `false` otherwise
+reason.human | string  | A human-readable success/failure message
+reason.robot | string  | An error code that should be easier to parse. See below.
+
+### Error Codes
+
+Code | Description
+---- | -----------
+cooldown | The requesting client has to wait longer before requesting again
+timeout  | The request could not be completed because the request backend was unreachable
+success  | The request completed successfully
+banned   | The requesting client has been banned from making requests
+invalid  | The hash provided was invalid
+
 
