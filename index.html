@@ -1,0 +1,488 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>R/a/dio API v2 Docs</title>
+
+    <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+      <script src="javascripts/all.js" type="text/javascript"></script>
+
+      <script>
+        $(function() {
+          setupLanguages(["shell"]);
+        });
+      </script>
+  </head>
+
+  <body class="index">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png" />
+      </span>
+    </a>
+    <div class="tocify-wrapper">
+      <img src="images/logo.png" />
+        <div class="lang-selector">
+              <a href="#" data-language-name="shell">shell</a>
+        </div>
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+      <div id="toc">
+      </div>
+        <ul class="toc-footer">
+            <li><a href='https://docs.r-a-d.io/v1'>Version 1 Documentation</a></li>
+        </ul>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        <h1 id="introduction">Introduction</h1>
+
+<p>R/a/dio&rsquo;s API is a plain REST API. We don&rsquo;t give out authentication keys unless you have an obvious need for it. Aside from that, requests are essentially limitless, and there is a global 1 second cache on all requests to avoid hitting a database more than needed when our highest resolution timestamps are in seconds.</p>
+
+<aside class="warning">
+Unless explicitly stated, all endpoints are <code>GET</code> only unless authenticated.
+</aside>
+
+<aside class="notice">
+  Should you need PUT/DELETE/PATCH capabilities and can;t make native requests, add the method to the <code>_method</code> query parameter.
+</aside>
+
+<p>The base URL for the v2 API is <code class="prettyprint">https://api.r-a-d.io/v2</code>, and GET examples are accessible in a browser.</p>
+
+<h1 id="overview">Overview</h1>
+
+<h2 id="current-info">Current Info</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.r-a-d.io/v2/current"</span>
+</code></pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"now_playing"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tripflag - #comiket"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"listeners"</span><span class="p">:</span><span class="w"> </span><span class="mi">125</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"bot_stream"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"start"</span><span class="p">:</span><span class="w"> </span><span class="mi">1432643119</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"end"</span><span class="p">:</span><span class="w"> </span><span class="mi">1432643358</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"current"</span><span class="p">:</span><span class="w"> </span><span class="mi">1432643325</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"thread_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/thread/1"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"requests"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"song"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1337</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"artist"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tripflag"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#comiket"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"album"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Tesudo Musume - Collection"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tags"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gatta goto chuu chuu tetsu musuu"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"dj"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"17"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hanyuu-sama"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"image_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://static.r-a-d.io/images/dj/17"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This endpoint retrieves all kittens.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://api.r-a-d.io/v2/current</code></p>
+
+<h3 id="response">Response</h3>
+
+<p>Will always return <code class="prettyprint">200 OK</code> unless we&rsquo;ve really screwed up, in which case you&rsquo;ll see a <code class="prettyprint">500 Internal Server Error</code>.</p>
+
+<table><thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>now_playing</td>
+<td>string</td>
+<td>The currently playing song&rsquo;s metadata. This can be an empty string.</td>
+</tr>
+<tr>
+<td>listeners</td>
+<td>integer</td>
+<td>The number of listeners currently tuned into R/a/dio.</td>
+</tr>
+<tr>
+<td>bot_stream</td>
+<td>boolean</td>
+<td>If true, then our <a href="https://github.com/R-a-dio/Hanyuu-sama">AFK Streamer</a> is playing. This does not mean you can request.</td>
+</tr>
+<tr>
+<td>start</td>
+<td>long</td>
+<td>Unix timestamp for the time the current song started</td>
+</tr>
+<tr>
+<td>end</td>
+<td>long</td>
+<td>Unix timestamp for the time the current song ended. <code class="prettyprint">null</code> if unknown.</td>
+</tr>
+<tr>
+<td>current</td>
+<td>long</td>
+<td>The current server time as a unix timestamp, used for syncing progress bars.</td>
+</tr>
+<tr>
+<td>thread</td>
+<td>string</td>
+<td>A url to the current thread. Can be <code class="prettyprint">string</code> or <code class="prettyprint">null</code></td>
+</tr>
+<tr>
+<td>requests</td>
+<td>boolean</td>
+<td>If <code class="prettyprint">true</code>, requests are allowed to the <code class="prettyprint">/request</code> endpoint.</td>
+</tr>
+<tr>
+<td>song</td>
+<td>object</td>
+<td>A <a href="#songs">Songs</a> object or <code class="prettyprint">null</code>, describing the current playing song. If <code class="prettyprint">null</code>, we don&rsquo;t have the song in our database, or a DJ is playing with different metadata.</td>
+</tr>
+<tr>
+<td>dj</td>
+<td>object</td>
+<td>A <a href="#djs">DJs</a> object, or <code class="prettyprint">null</code> if there is no currently connected DJ (stream is offline)</td>
+</tr>
+<tr>
+<td>online</td>
+<td>boolean</td>
+<td><code class="prettyprint">true</code> if the stream is currently online (A DJ is connected). Note this value can be unreliable as the stream has a fallback.</td>
+</tr>
+</tbody></table>
+
+<h1 id="songs">Songs</h1>
+
+<h2 id="get-a-specific-song-by-id">Get a specific song by ID</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.r-a-d.io/v2/songs/1337"</span>
+</code></pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"artist"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tripflag"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#comiket"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"album"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Tesudo Musume - Collection"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"gatta"</span><span class="p">,</span><span class="w"> </span><span class="s2">"goto"</span><span class="p">,</span><span class="w"> </span><span class="s2">"chuu"</span><span class="p">,</span><span class="w"> </span><span class="s2">"chuu"</span><span class="p">,</span><span class="w"> </span><span class="s2">"tetsu"</span><span class="p">,</span><span class="w"> </span><span class="s2">"musuu"</span><span class="p">],</span><span class="w">
+  </span><span class="s2">"requestable"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"cooldown"</span><span class="p">:</span><span class="w"> </span><span class="mi">12341</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"request_hash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"abcdef1234567890"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"last_played"</span><span class="p">:</span><span class="w"> </span><span class="mi">1432643119</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"last_requested"</span><span class="p">:</span><span class="w"> </span><span class="mi">1432643117</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"plays"</span><span class="p">:</span><span class="w"> </span><span class="mi">9001</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This endpoint retrieves a specific song by ID. See below for searching, which uses elasticsearch.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://api.r-a-d.io/v2/songs/:id</code></p>
+
+<h3 id="response">Response</h3>
+
+<table><thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>artist</td>
+<td>string</td>
+<td>The song&rsquo;s artist metadata</td>
+</tr>
+<tr>
+<td>title</td>
+<td>string</td>
+<td>The song&rsquo;s title metadata</td>
+</tr>
+<tr>
+<td>album</td>
+<td>string</td>
+<td>The song&rsquo;s album metadata</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>array</td>
+<td>Tags for the song provided by R/a/dio admins, each tag is a string</td>
+</tr>
+<tr>
+<td>requestable</td>
+<td>boolean</td>
+<td><code class="prettyprint">true</code> if this song is requestable (no problems with the file, off cooldown)</td>
+</tr>
+<tr>
+<td>cooldown</td>
+<td>long</td>
+<td>The number of seconds until a song becomes requestable (if negative, assume never). Requestable songs will show <code class="prettyprint">0</code> as the cooldown</td>
+</tr>
+<tr>
+<td>request_hash</td>
+<td>string</td>
+<td>A unique identifier used to request the song using the <code class="prettyprint">/song/:id/request</code> endpoint</td>
+</tr>
+<tr>
+<td>last_played</td>
+<td>long</td>
+<td>The unix timestamp of when this song was last played</td>
+</tr>
+<tr>
+<td>last_requested</td>
+<td>long</td>
+<td>The unix timestamp of when this song was last requested</td>
+</tr>
+<tr>
+<td>plays</td>
+<td>integer</td>
+<td>The number of times this song has been last_played</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+  Be careful - cooldowns and other times use the value of the <code>current</code> key on the <code>GET /current</code> endpoint as their canonical time.
+</aside>
+
+<h2 id="search-for-a-song">Search for a song</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.r-a-d.io/v2/songs/search?q=comiket"</span>
+</code></pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"artist"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tripflag"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#comiket"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"album"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Tesudo Musume - Collection"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"gatta"</span><span class="p">,</span><span class="w"> </span><span class="s2">"goto"</span><span class="p">,</span><span class="w"> </span><span class="s2">"chuu"</span><span class="p">,</span><span class="w"> </span><span class="s2">"chuu"</span><span class="p">,</span><span class="w"> </span><span class="s2">"tetsu"</span><span class="p">,</span><span class="w"> </span><span class="s2">"musuu"</span><span class="p">],</span><span class="w">
+    </span><span class="s2">"requestable"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"cooldown"</span><span class="p">:</span><span class="w"> </span><span class="mi">12341</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"request_hash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"abcdef1234567890"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"last_played"</span><span class="p">:</span><span class="w"> </span><span class="mi">1432643119</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"last_requested"</span><span class="p">:</span><span class="w"> </span><span class="mi">1432643117</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"plays"</span><span class="p">:</span><span class="w"> </span><span class="mi">9001</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"artist"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tripflag"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#comiket - another one"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"album"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Tesudo Musume - Collection"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"gatta"</span><span class="p">,</span><span class="w"> </span><span class="s2">"goto"</span><span class="p">,</span><span class="w"> </span><span class="s2">"chuu"</span><span class="p">,</span><span class="w"> </span><span class="s2">"chuu"</span><span class="p">,</span><span class="w"> </span><span class="s2">"tetsu"</span><span class="p">,</span><span class="w"> </span><span class="s2">"musuu"</span><span class="p">],</span><span class="w">
+    </span><span class="s2">"requestable"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"cooldown"</span><span class="p">:</span><span class="w"> </span><span class="mi">12341</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"request_hash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"abcdef1234567890"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"last_played"</span><span class="p">:</span><span class="w"> </span><span class="mi">1432643119</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"last_requested"</span><span class="p">:</span><span class="w"> </span><span class="mi">1432643117</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"plays"</span><span class="p">:</span><span class="w"> </span><span class="mi">9001</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre>
+
+<p>This endpoint retrieves a specific song by ID. See below for searching, which uses elasticsearch.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://api.r-a-d.io/v2/songs/search</code></p>
+
+<h3 id="response">Response</h3>
+
+<p>See above. Returns an empty array (<code class="prettyprint">[]</code>) when no results are found.</p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>q</td>
+<td>string</td>
+<td>The primary search key (string); use this for search boxes</td>
+</tr>
+<tr>
+<td>artist</td>
+<td>string</td>
+<td>Fuzzy-matched against the <code class="prettyprint">artist</code> key of a <code class="prettyprint">Song</code></td>
+</tr>
+<tr>
+<td>title</td>
+<td>string</td>
+<td>Fuzzy-matched against the <code class="prettyprint">title</code> key of a <code class="prettyprint">Song</code></td>
+</tr>
+<tr>
+<td>album</td>
+<td>string</td>
+<td>Fuzzy-matched against the <code class="prettyprint">album</code> key of a <code class="prettyprint">Song</code></td>
+</tr>
+<tr>
+<td>tags</td>
+<td>string</td>
+<td>Space-delimited string of tags to exact-match against</td>
+</tr>
+</tbody></table>
+
+<h2 id="request-a-song">Request a song</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.r-a-d.io/v2/songs/1337/request"</span> <span class="se">\</span>
+      -d <span class="s2">"hash=abcdef1234567890123412512351235"</span> <span class="se">\</span>
+      -XPATCH 
+</code></pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"requested"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"reason"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"human"</span><span class="p">:</span><span class="w"> </span><span class="s2">"You need to wait longer before you can request"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"robot"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cooldown"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">PATCH https://api.r-a-d.io/v2/songs/1337/request</code></p>
+
+<aside class="notice">
+  If you can&rsquo;t make a PATCH request, append <code>?_method=PATCH</code> to the and use GET/POST
+</aside>
+
+<h3 id="response">Response</h3>
+
+<table><thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>requested</td>
+<td>boolean</td>
+<td><code class="prettyprint">true</code> if the song was successfully requested, <code class="prettyprint">false</code> otherwise</td>
+</tr>
+<tr>
+<td>reason.human</td>
+<td>string</td>
+<td>A human-readable success/failure message</td>
+</tr>
+<tr>
+<td>reason.robot</td>
+<td>string</td>
+<td>An error code that should be easier to parse. See below.</td>
+</tr>
+</tbody></table>
+
+<h3 id="error-codes">Error Codes</h3>
+
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>cooldown</td>
+<td>The requesting client has to wait longer before requesting again</td>
+</tr>
+<tr>
+<td>timeout</td>
+<td>The request could not be completed because the request backend was unreachable</td>
+</tr>
+<tr>
+<td>success</td>
+<td>The request completed successfully</td>
+</tr>
+<tr>
+<td>banned</td>
+<td>The requesting client has been banned from making requests</td>
+</tr>
+<tr>
+<td>invalid</td>
+<td>The hash provided was invalid, and the request was discarded</td>
+</tr>
+</tbody></table>
+
+          <h1 id="status-codes">Status Codes</h1>
+
+<p>The R/a/dio API uses the following error codes:</p>
+
+<table><thead>
+<tr>
+<th>Error Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>400</td>
+<td>Bad Request &ndash; Your request sucks</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized &ndash; Your API key is wrong when trying to make authenticated requests</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden &ndash; You aren&rsquo;t authenticated and are trying to access a protected resource</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found &ndash; The specified resource could not be found</td>
+</tr>
+<tr>
+<td>405</td>
+<td>Method Not Allowed &ndash; You tried to use a method we don&rsquo;t respond to</td>
+</tr>
+<tr>
+<td>406</td>
+<td>Not Acceptable &ndash; You requested a format that isn&rsquo;t json</td>
+</tr>
+<tr>
+<td>410</td>
+<td>Gone &ndash; A resource was removed (rarely used)</td>
+</tr>
+<tr>
+<td>418</td>
+<td>I&rsquo;m a teapot &ndash; You will know why you get this response</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too Many Requests &ndash; Stop spamming already (Time until unbanned: <code class="prettyprint">X-Radio-Timeout</code> header)</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error &ndash; We had a problem with our server. It&rsquo;ll maybe be fixed</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable &ndash; We&rsquo;re temporarially offline for maintenance</td>
+</tr>
+</tbody></table>
+
+      </div>
+      <div class="dark-box">
+          <div class="lang-selector">
+                <a href="#" data-language-name="shell">shell</a>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>
