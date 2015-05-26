@@ -92,8 +92,8 @@ html, body {
   // This is the logo at the top of the ToC
   &>img {
     display: block;
-    max-width: $nav-width - 20;
-    margin: 5px 10px 5px 10px;
+    max-width: $nav-width - 60;
+    margin: 10px 30px 10px 30px;
   }
 
   &>.search {

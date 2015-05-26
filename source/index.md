@@ -200,8 +200,9 @@ tags      | string | Space-delimited string of tags to exact-match against
 ## Request a song
 
 ```shell
-curl -XPATCH "https://api.r-a-d.io/v2/songs/1337/request" \
-      -d "hash=abcdef1234567890123412512351235"
+curl "https://api.r-a-d.io/v2/songs/1337/request" \
+      -d "hash=abcdef1234567890123412512351235" \
+      -XPATCH 
 ```
 
 > The above command returns JSON structured like this:
