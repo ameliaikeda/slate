@@ -134,7 +134,7 @@ last_played    | long    | The unix timestamp of when this song was last played
 last_requested | long    | The unix timestamp of when this song was last requested
 plays          | integer | The number of times this song has been last_played
 
-<aside class="info">
+<aside class="notice">
   Be careful - cooldowns and other times use the value of the <code>current</code> key on the <code>GET /current</code> endpoint as their canonical time.
 </aside>
 
@@ -220,6 +220,10 @@ curl -XPATCH "https://api.r-a-d.io/v2/songs/1337/request" \
 
 `PATCH https://api.r-a-d.io/v2/songs/1337/request`
 
+<aside class="notice">
+  If you can't make a PATCH request, append <code>?_method=PATCH</code> to the and use GET/POST
+</aside>
+
 ### Response
 
 Key | Type | Description
@@ -236,6 +240,6 @@ cooldown | The requesting client has to wait longer before requesting again
 timeout  | The request could not be completed because the request backend was unreachable
 success  | The request completed successfully
 banned   | The requesting client has been banned from making requests
-invalid  | The hash provided was invalid
+invalid  | The hash provided was invalid, and the request was discarded
 
 
